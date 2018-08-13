@@ -15,12 +15,12 @@ RUN set -ex \
   && yes | certmgr -ssl -m https://go.microsoft.com \
   && yes | certmgr -ssl -m https://nugetgallery.blob.core.windows.net \
   && yes | certmgr -ssl -m https://nuget.org \
+  && mozroots --import --machine --sync \
+  && mono --version \
   && apt -q -y autoremove && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin \
   && mkdir /icsharp \
   && chown -R $NB_USER /icsharp \
   && chown -R $NB_USER $HOME/.config/
-#  && mozroots --import --machine --sync \
-#  && mono --version
 
 
 USER jovyan

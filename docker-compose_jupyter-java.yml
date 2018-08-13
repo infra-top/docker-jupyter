@@ -8,7 +8,7 @@ services:
       args:
       #- IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR}
       - IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR:-mirrors.163.com}
-      - IMAGE_ARG_FILESERVER=${IMAGE_ARG_FILESERVER}
+      - IMAGE_ARG_FILESERVER=${IMAGE_ARG_FILESERVER:-http://fileserver.infra.top}
     command: ["start-notebook.sh"]
     container_name: ${CONTAINER_HOST_NAME:-jupyter-java}
     environment:

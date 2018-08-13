@@ -16,11 +16,13 @@ docker-compose -f docker-compose_jupyter-ierl.yml build --pull
 
 docker-compose -f docker-compose_jupyter-golang.yml build --pull
 
-docker-compose -f docker-compose_jupyter-cling.yml build --pull
+docker-compose -f docker-compose_jupyter-perl.yml build --pull
 
 docker-compose -f docker-compose_jupyter-java.yml build --pull
 
-#docker-compose -f docker-compose_jupyter-perl.yml build --pull
+#docker-compose -f docker-compose_jupyter-haskell.yml build --pull
+
+docker-compose -f docker-compose_jupyter-cling.yml build --pull
 
 #docker-compose -f docker-compose_jupyter-icsharp.yml build --pull
 ```
