@@ -55,6 +55,10 @@ docker-compose down -v
 
 ## TODOs
 
-https://medium.com/eliiza-ai/swift-4-1-in-a-jupyter-notebook-725601f79c68
-https://github.com/ligee/kotlin-jupyter
-https://github.com/pprzetacznik/IElixir
+https://medium.com/eliiza-ai/swift-4-1-in-a-jupyter-notebook-725601f79c68  
+
+https://github.com/ligee/kotlin-jupyter  
+
+https://github.com/pprzetacznik/IElixir  
+
+https://github.com/Calysto/calysto_prolog  

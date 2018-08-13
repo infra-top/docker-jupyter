@@ -8,24 +8,29 @@ USER root
 RUN set -ex \
   && echo ===== Install haskell ===== \
   && apt -y update \
-  && apt -y install python3-pip python3-setuptools libtinfo-dev libzmq3-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev \
-  && export STACK_TEMP_DIR=/tmp/stack \
-  && mkdir -p ${STACK_TEMP_DIR} \
+  && apt -y install libtinfo-dev libzmq3-dev libcairo2-dev libpango1.0-dev libmagic-dev libblas-dev liblapack-dev python3-dev python3-pip python3-setuptools \
+  && pip3 install --upgrade pip setuptools wheel \
   && curl -sSL https://get.haskellstack.org/ | sh \
   && apt -q -y autoremove && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
-
-
-USER jovyan
 
 #x https://github.com/gibiansky/IHaskell
 RUN set -ex \
   && echo ===== Install haskell ===== \
   && git clone https://github.com/gibiansky/IHaskell \
   && cd IHaskell \
+  && mkdir $HOME/.stack \
+  && chown -R root $HOME/.cache \
   && pip3 install -r requirements.txt \
   && stack install gtk2hs-buildtools \
   && stack install --fast \
-  && ihaskell install --stack
+  && chown -R jovyan $HOME
+
+
+USER jovyan
+
+RUN set -ex; \
+  cd IHaskell; \
+  ihaskell install --stack;
 
 
 USER root
