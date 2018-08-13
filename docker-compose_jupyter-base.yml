@@ -1,0 +1,29 @@
+
+version: '2.1'
+services:
+  jupyter-base:
+    build:
+      context: docker-jupyter-base
+      dockerfile: Dockerfile
+      args:
+      #- IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR}
+      - IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR:-mirrors.163.com}
+      - IMAGE_ARG_FILESERVER=${IMAGE_ARG_FILESERVER}
+    command: ["start-notebook.sh"]
+    container_name: ${CONTAINER_HOST_NAME:-jupyter-base}
+    environment:
+    #- CHOWN_EXTRA="<some dir>,<some other dir>"
+    #- CHOWN_EXTRA_OPTS=-R
+    - CHOWN_HOME=yes
+    - CHOWN_HOME_OPTS=-R
+    - GEN_CERT=yes
+    - GRANT_SUDO=yes
+    - JUPYTER_LAB_ENABLE=${JUPYTER_LAB_ENABLE:-no}
+    - NB_GID=1000
+    - NB_GROUP=${NB_USER:-jovyan}
+    - NB_UID=1000
+    - NB_USER=${NB_USER:-jovyan}
+    hostname: ${CONTAINER_HOST_NAME:-jupyter-base}
+    image: ${IMAGE_PREFIX:-infratop}/jupyter-base:${IMAGE_TAG:-177037d09156}
+    ports:
+    - "${SERVER_PORT:-8888}:8888"
