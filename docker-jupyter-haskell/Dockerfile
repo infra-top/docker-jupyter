@@ -1,5 +1,5 @@
 
-FROM infratop/jupyter-golang:177037d09156
+FROM infratop/jupyter-java:177037d09156
 
 
 USER root
