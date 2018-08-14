@@ -13,7 +13,7 @@ dist: trusty
 env:
   global:
   - IMAGE_ARG_FILESERVER=
-  - IMAGE_NAME=jupyter-haskell
+  - IMAGE_NAME=jupyter-haskell-base
   - IMAGE_TAG=
 #  matrix:
 
