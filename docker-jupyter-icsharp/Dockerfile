@@ -1,5 +1,8 @@
 
-FROM infratop/jupyter-base:177037d09156
+FROM infratop/jupyter-cling:177037d09156
+
+
+ARG IMAGE_ARG_FILESERVER
 
 
 USER root
@@ -26,27 +29,40 @@ RUN set -ex \
 USER jovyan
 
 # https://github.com/zabirauf/icsharp
+# https://github.com/zabirauf/icsharp/issues/46
+# https://github.com/gyurisc/icsharp.kernel/releases/download/v1.0-beta/icsharp_kernel_v1.0.zip
+RUN set -ex; \
+  mkdir -p icsharp; \
+  ${ARIA2C_DOWNLOAD} -d $(pwd)/icsharp -o icsharp_kernel_v1.0.zip ${IMAGE_ARG_FILESERVER:-https://github.com}/gyurisc/icsharp.kernel/releases/download/v1.0-beta/icsharp_kernel_v1.0.zip; \
+  cd icsharp; \
+  unzip icsharp_kernel_v1.0.zip; \
+  rm -f icsharp_kernel_v1.0.zip; \
+  mono icsharp.exe; \
+  cd ..;
+
+# following script not work
+# https://github.com/zabirauf/icsharp
 # issue: Unable to find version '1.9.2' of package 'xunit.runners'
 # see: https://github.com/zabirauf/icsharp/issues/38
 # see: https://github.com/3Dcube/docker-jupyter-icsharp/blob/master/Dockerfile
 # Build scriptcs
-RUN set -ex \
-  && git clone --recursive https://github.com/zabirauf/icsharp.git /icsharp \
-  && cd /icsharp/Engine \
-  && mozroots --import --sync --quiet \
-  && mono ./.nuget/NuGet.exe restore ./ScriptCs.sln \
-  && mkdir -p artifacts/Release/bin
-# Build iCSharp
-RUN cd /icsharp \
-  && mozroots --import --sync --quiet \
-  && mono ./.nuget/NuGet.exe restore ./iCSharp.sln \
-  && mkdir -p build/Release/bin \
-  && xbuild ./iCSharp.sln /property:Configuration=Release /nologo /verbosity:normal
-# Copy files safely
-RUN for line in $(find ./*/bin/Release/*); do cp $line ./build/Release/bin; done
-# Install kernel
-COPY docker/kernel.json /icsharp/kernel-spec/kernel.json
-RUN jupyter-kernelspec install --user kernel-spec
+#RUN set -ex \
+#  && git clone --recursive https://github.com/zabirauf/icsharp.git /icsharp \
+#  && cd /icsharp/Engine \
+#  && mozroots --import --sync --quiet \
+#  && mono ./.nuget/NuGet.exe restore ./ScriptCs.sln \
+#  && mkdir -p artifacts/Release/bin
+## Build iCSharp
+#RUN cd /icsharp \
+#  && mozroots --import --sync --quiet \
+#  && mono ./.nuget/NuGet.exe restore ./iCSharp.sln \
+#  && mkdir -p build/Release/bin \
+#  && xbuild ./iCSharp.sln /property:Configuration=Release /nologo /verbosity:normal
+## Copy files safely
+#RUN for line in $(find ./*/bin/Release/*); do cp $line ./build/Release/bin; done
+## Install kernel
+#COPY docker/kernel.json /icsharp/kernel-spec/kernel.json
+#RUN jupyter-kernelspec install --user kernel-spec
 
 
 USER root

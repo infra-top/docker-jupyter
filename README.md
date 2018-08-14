@@ -1,5 +1,6 @@
 # docker-jupyter
 
+## Build Images
 
 ```bash
 docker-compose -f docker-compose_jupyter-base.yml build --pull
@@ -20,13 +21,15 @@ docker-compose -f docker-compose_jupyter-perl.yml build --pull
 
 docker-compose -f docker-compose_jupyter-java.yml build --pull
 
-#docker-compose -f docker-compose_jupyter-haskell.yml build --pull
-
 docker-compose -f docker-compose_jupyter-cling.yml build --pull
 
-#docker-compose -f docker-compose_jupyter-icsharp.yml build --pull
+docker-compose -f docker-compose_jupyter-icsharp.yml build --pull
+
+#docker-compose -f docker-compose_jupyter-haskell.yml build --pull
 ```
 
+
+## Run
 
 ```bash
 docker network create --driver=bridge --ipv6 --ipam-driver=default --subnet=172.16.238.0/24 --subnet=2001:3984:3989::/64 local-network
@@ -44,6 +47,13 @@ docker-compose down -v
 ```
 
 
+```bash
+# in container
+jupyter kernelspec list
+```
+
+
+## Jupyter Documents
 
 [github.com/jupyter/docker-stacks](https://github.com/jupyter/docker-stacks)
 
@@ -52,6 +62,7 @@ docker-compose down -v
 [Selecting an Image](https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html)
 
 [Jupyter kernels](https://github.com/jupyter/jupyter/wiki/Jupyter-kernels)
+
 
 ## TODOs
 

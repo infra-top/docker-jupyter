@@ -1,7 +1,7 @@
 
 version: '2.1'
 services:
-  jupyter-base:
+  jupyter-ierl:
     build:
       context: docker-jupyter-ierl
       dockerfile: Dockerfile
