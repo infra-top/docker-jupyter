@@ -18,7 +18,8 @@ RUN set -ex \
   && apt -y update \
   && apt-get -y --no-install-recommends install apt-transport-https apt-utils aria2 autoconf automake \
   binutils bison bzip2 ca-certificates curl dirmngr dnsutils fonts-dejavu gcc gfortran git gnupg gnupg2 gnupg1 \
-  libcurl4-openssl-dev libffi-dev libncurses-dev libreadline-dev libxslt-dev libssl-dev libtool libxml2-dev libxrender1 libxslt1-dev libyaml-dev \
-  make mercurial ntp openssh-client openssl python3-pip \
+  libcurl4-openssl-dev libffi-dev libncurses-dev libreadline-dev libxslt-dev libssl-dev libtool libxml2-dev \
+  libxrender1 libxslt1-dev libyaml-dev \
+  make mercurial ntp openssh-client openssl \
   software-properties-common sqlite3 sudo tar tzdata unzip vim wget xz-utils zip zlib1g-dev \
   && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin

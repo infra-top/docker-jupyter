@@ -11,7 +11,6 @@ RUN set -ex \
   && apt -y install libtool libffi-dev ruby ruby-dev make \
   && apt -y install libzmq3-dev libczmq-dev \
   && gem install cztop iruby \
-  && chown -R $NB_USER $HOME \
   && apt -q -y autoremove && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
 
 

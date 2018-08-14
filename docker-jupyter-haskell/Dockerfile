@@ -6,16 +6,15 @@ ARG IMAGE_ARG_FILESERVER
 ARG ALL_PROXY
 
 
-USER root
+USER jovyan
 
 # https://github.com/gibiansky/IHaskell
 RUN set -ex \
-  && chown -R root $HOME/.stack \
-  && stack install --fast \
-  && chown -R jovyan $HOME/.stack
+  && cd IHaskell \
+  && sudo ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libtinfo.so.6 \
+  && stack install --fast
 
-
-USER jovyan
+ENV PATH /home/jovyan/.local/bin:${PATH}
 
 RUN set -ex; \
   cd IHaskell; \

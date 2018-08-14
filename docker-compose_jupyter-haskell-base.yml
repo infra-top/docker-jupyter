@@ -6,6 +6,7 @@ services:
       context: docker-jupyter-haskell-base
       dockerfile: Dockerfile
       args:
+      #- ALL_PROXY=${ALL_PROXY:-socks5://docker.for.mac.localhost:1086}
       - ALL_PROXY=${ALL_PROXY}
       #- IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR}
       - IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR:-mirrors.163.com}
