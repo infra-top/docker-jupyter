@@ -33,9 +33,15 @@ COPY --chown=root:root docker /
 
 RUN set -ex \
   && chown -R root $HOME/.stack \
+  && mkdir -p $HOME/.stack/programs/x86_64-linux \
   && ls -la $HOME/.stack/programs/x86_64-linux \
   && if [ ! -f $HOME/.stack/programs/x86_64-linux/ghc-8.4.3.tar.xz ]; then \
          ${ARIA2C_DOWNLOAD} -d $HOME/.stack/programs/x86_64-linux -o ghc-8.4.3.tar.xz ${IMAGE_ARG_FILESERVER:-https://downloads.haskell.org}/~ghc/8.4.3/ghc-8.4.3-x86_64-deb8-linux.tar.xz; \
+     else \
+         echo '\npackage-indices:\n\
+  - name: Tsinghua\n\
+    download-prefix: http://mirrors.tuna.tsinghua.edu.cn/hackage/package/\n\
+    http: http://mirrors.tuna.tsinghua.edu.cn/hackage/00-index.tar.gz\n' >> /etc/debconf.txt; \
      fi \
   && stack install gtk2hs-buildtools -v \
   && rm -f $HOME/.stack/programs/x86_64-linux/ghc-8.4.3.tar.xz \
