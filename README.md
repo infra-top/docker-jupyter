@@ -26,6 +26,8 @@ docker-compose -f docker-compose_jupyter-cling.yml build --pull
 docker-compose -f docker-compose_jupyter-icsharp.yml build --pull
 
 #docker-compose -f docker-compose_jupyter-haskell.yml build --pull
+
+docker-compose build --pull
 ```
 
 
@@ -70,6 +72,4 @@ https://medium.com/eliiza-ai/swift-4-1-in-a-jupyter-notebook-725601f79c68
 
 https://github.com/ligee/kotlin-jupyter  
 
-https://github.com/pprzetacznik/IElixir  
-
-https://github.com/Calysto/calysto_prolog  
+https://github.com/pprzetacznik/IElixir   

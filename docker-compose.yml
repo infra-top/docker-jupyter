@@ -5,7 +5,7 @@
 
 version: '2.1'
 services:
-  jupyter:
+  jupyter-notebook:
     build:
       context: .
       dockerfile: Dockerfile
@@ -14,7 +14,7 @@ services:
       - IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR:-mirrors.163.com}
       - IMAGE_ARG_FILESERVER=${IMAGE_ARG_FILESERVER}
     command: ["start-notebook.sh"]
-    container_name: ${CONTAINER_HOST_NAME:-jupyter}
+    container_name: ${CONTAINER_HOST_NAME:-jupyter-notebook}
     environment:
     #- CHOWN_EXTRA="<some dir>,<some other dir>"
     #- CHOWN_EXTRA_OPTS=-R
@@ -27,8 +27,8 @@ services:
     - NB_GROUP=${NB_USER:-jovyan}
     - NB_UID=1000
     - NB_USER=${NB_USER:-jovyan}
-    hostname: ${CONTAINER_HOST_NAME:-jupyter}
-    image: ${IMAGE_PREFIX:-infratop}/jupyter-all-spark-notebook:${IMAGE_TAG:-177037d09156}
+    hostname: ${CONTAINER_HOST_NAME:-jupyter-notebook}
+    image: ${IMAGE_PREFIX:-infratop}/jupyter-notebook:${IMAGE_TAG:-177037d09156}
     networks:
       local-network:
         ipv4_address: 172.16.238.100
