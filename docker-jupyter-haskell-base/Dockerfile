@@ -1,35 +1,118 @@
 
-FROM infratop/jupyter-icsharp:177037d09156
+#FROM fpco/stack-build:lts-11.21
+FROM jupyter/datascience-notebook:2bfbb7d17524
 
 
 ARG IMAGE_ARG_FILESERVER
 
 
+ENV ARIA2C_DOWNLOAD aria2c --file-allocation=none -c -x 10 -s 10 -m 0 --console-log-level=notice --log-level=notice --summary-interval=0
+
+
 USER root
 
-# https://github.com/gibiansky/IHaskell
+
 RUN set -ex \
+  && apt-get -y update \
+  && apt-get -y install apt-transport-https \
+  && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
+
+
+#COPY --from=jupyter/datascience-notebook:2bfbb7d17524 / /
+COPY --from=fpco/stack-build:lts-11.21 / /
+
+
+# F60F4B3D7FA2AF80 is key of repo http://*.download.nvidia.com
+RUN set -ex \
+  && cat /etc/os-release \
   && echo "jovyan ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/jovyan \
-  && apt -y update \
-  && apt -y install libblas-dev libcairo2-dev libgeoip-dev libicu-dev libmagic-dev liblapack-dev libpango1.0-dev \
-                    libsnappy-dev libtinfo-dev libzmq3-dev python3-dev \
+  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F60F4B3D7FA2AF80 \
+  && sed -i 's#deb http:#deb https:#' /etc/apt/sources.list.d/cuda.list \
+  && apt-get -y clean \
+  && apt-get -y update \
+  && apt-get -y install aria2 gnupg \
+                    libblas-dev libcairo2-dev libgeoip-dev libffi-dev libgmp-dev \
+                    libicu-dev libmagic-dev liblapack-dev libpango1.0-dev libsnappy-dev libtinfo-dev libzmq3-dev \
+                    netbase python3-dev wget \
+  && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libtinfo.so.6 \
+  && ls -la /var/cache/man/ \
   && apt-get -y -q purge python3-pip python-pip-whl \
   && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
 # python3-pip python3-setuptools python-pip-whl
 
 
+## https://github.com/commercialhaskell/stack/blob/master/etc/dockerfiles/stack-build/lts-11.0/Dockerfile
+#ARG GHC_VERSION=8.2.2
+#ARG LTS_SLUG=lts-11.21
+#ARG PID1_VERSION=0.1.0.1
+#ARG STACK_VERSION=1.6.5
+#ARG BOOTSTRAP_COMMIT=13ab2b86779c98598e96af7f4c4b9653ba280be5
+#ARG DEBIAN_FRONTEND=noninteractive
+#
+##
+## Set encoding to UTF-8 and PATH to find GHC and cabal/stack-installed binaries.
+##
+#ENV LANG=C.UTF-8 \
+#    LC_ALL=C.UTF-8 \
+#    PATH=/root/.cabal/bin:/root/.local/bin:/opt/ghc/$GHC_VERSION/bin:$PATH
+#
+##
+## Use Stackage's debian-bootstrap.sh script to install system libraries and
+## tools required to build any Stackage package.
+##
+#RUN set -ex \
+#  && wget -qO- https://raw.githubusercontent.com/fpco/stackage/$BOOTSTRAP_COMMIT/debian-bootstrap.sh | bash
+#
+##
+## Create symlink to help tools find GHC documentation
+##
+#RUN ln -s ghc /opt/ghc/$GHC_VERSION/share/doc/ghc-$GHC_VERSION
+#
+##
+## Use 'stack' to install basic Haskell tools like alex, happy, and cpphs. We
+## remove most of the STACK_ROOT afterward to save space, but keep the 'share'
+## files that some of these tools require.
+##
+#RUN stack --system-ghc --resolver=$LTS_SLUG --local-bin-path=/usr/local/bin install \
+#        cabal-install happy alex cpphs gtk2hs-buildtools hscolour && \
+#    cd $HOME/.stack && \
+#    find . -type f -not -path './snapshots/*/share/*' -exec rm '{}' \; && \
+#    find . -type d -print0 |sort -rz |xargs -0 rmdir 2>/dev/null || true
+#
+##
+## Install 'pid1' init daemon
+##
+#RUN wget -O- "https://github.com/fpco/pid1/releases/download/pid1%2F$PID1_VERSION/pid1-$PID1_VERSION-linux-x86_64.tar.gz" | tar xzf - -C /usr/local && \
+#    chown root:root /usr/local/sbin && \
+#    chown root:root /usr/local/sbin/pid1
+#
+##
+## Install Stack
+##
+##wget -qO- https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSION/stack-$STACK_VERSION-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C /usr/local/bin '*/stack'
+#RUN set -ex \
+#  && ${ARIA2C_DOWNLOAD} -d $(pwd) -o stack.tar.gz https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSION/stack-$STACK_VERSION-linux-x86_64.tar.gz \
+#  && tar xz --wildcards --strip-components=1 -C /usr/local/bin '*/stack' stack.tar.gz \
+#  && rm -f stack.tar.gz
+#
+##
+## Set up pid1 entrypoint and default command
+##
+#ENTRYPOINT ["/usr/local/sbin/pid1"]
+#CMD ["bash"]
+
+
+# https://github.com/gibiansky/IHaskell
 USER jovyan
 
 RUN set -ex \
   && ${ARIA2C_DOWNLOAD} -d $(pwd) -o get-pip.py https://bootstrap.pypa.io/get-pip.py \
   && python3 get-pip.py \
   && pip3 install --upgrade setuptools wheel \
-  && pip3 install pysocks \
-  && curl -sSL https://get.haskellstack.org/ | sh
-
+  && pip3 install pysocks
+#  && curl -sSL https://get.haskellstack.org/ | sh
 
 ARG ALL_PROXY
-
 
 #x https://github.com/gibiansky/IHaskell
 RUN set -ex \
@@ -40,7 +123,10 @@ RUN set -ex \
   && mkdir $HOME/.stack \
   && pip3 install -r requirements.txt
 
-COPY --chown=1000:1000 docker /
+#COPY --chown=1000:1000 docker /
+# ${ARIA2C_DOWNLOAD} -d $HOME/.stack/programs/x86_64-linux -o ghc-8.2.2.tar.xz ${IMAGE_ARG_FILESERVER:-https://downloads.haskell.org}/~ghc/8.2.2/ghc-8.2.2-x86_64-deb8-linux.tar.xz
+# stack --resolver ghc-8.2.2 setup
+# rm -f $HOME/.stack/programs/x86_64-linux/ghc-8.2.2.tar.xz
 
 #package-indices:
 #- name: Tsinghua
@@ -55,23 +141,19 @@ COPY --chown=1000:1000 docker /
 RUN set -ex \
   && mkdir -p $HOME/.stack/programs/x86_64-linux \
   && ls -la $HOME/.stack/programs/x86_64-linux \
-  && if [ ! -f $HOME/.stack/programs/x86_64-linux/ghc-8.4.3.tar.xz ]; then \
-         ${ARIA2C_DOWNLOAD} -d $HOME/.stack/programs/x86_64-linux -o ghc-8.4.3.tar.xz ${IMAGE_ARG_FILESERVER:-https://downloads.haskell.org}/~ghc/8.4.3/ghc-8.4.3-x86_64-deb8-linux.tar.xz; \
-     else \
-         echo '\n\
+  && echo '\n\
 package-indices:\n\
 - name: Tsinghua\n\
   download-prefix: http://mirrors.tuna.tsinghua.edu.cn/hackage/package/\n\
-  http: http://mirrors.tuna.tsinghua.edu.cn/hackage/01-index.tar.gz\n\
+  http: http://mirrors.tuna.tsinghua.edu.cn/hackage/00-index.tar.gz\n\
 setup-info: "http://mirrors.tuna.tsinghua.edu.cn/stackage/stack-setup.yaml"\n\
 urls:\n\
   latest-snapshot: http://mirrors.tuna.tsinghua.edu.cn/stackage/snapshots.json\n\
   lts-build-plans: http://mirrors.tuna.tsinghua.edu.cn/stackage/lts-haskell/\n\
   nightly-build-plans: http://mirrors.tuna.tsinghua.edu.cn/stackage/stackage-nightly/\n\
-' >> $HOME/.stack/config.yaml; \
-     fi \
-  && stack install gtk2hs-buildtools -v \
-  && rm -f $HOME/.stack/programs/x86_64-linux/ghc-8.4.3.tar.xz
+' >> $HOME/.stack/config.yaml \
+  && cat $HOME/.stack/config.yaml \
+  && stack install gtk2hs-buildtools -v
 
 
 USER root
