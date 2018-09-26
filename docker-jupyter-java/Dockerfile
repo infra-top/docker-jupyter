@@ -17,8 +17,8 @@ RUN set -ex; \
 
 USER root
 
-#COPY --from=cirepo/java-oracle:9.0.4-alpine-3.7-archive /data/root /
-COPY --from=cirepo/java-oracle:10.0.1-alpine-3.7-archive /data/root /
+#COPY --from=cirepo/java-oracle:9.0.4-alpine-3.8-archive /data/root /
+COPY --from=cirepo/java-oracle:10.0.1-alpine-3.8-archive /data/root /
 
 # JAVA_HOME breaks spylon-kernel (Scala)
 #ENV JAVA_HOME /usr/lib/jvm/java-10-oracle
