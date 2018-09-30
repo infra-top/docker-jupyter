@@ -1,5 +1,5 @@
 
-FROM infratop/jupyter-icsharp:177037d09156
+FROM infratop/jupyter-haskell:177037d09156
 
 
 USER jovyan

@@ -1,6 +1,7 @@
 
 #FROM fpco/stack-build:lts-11.21
-FROM jupyter/datascience-notebook:2bfbb7d17524
+#FROM jupyter/datascience-notebook:2bfbb7d17524
+FROM infratop/jupyter-icsharp:177037d09156
 
 
 ARG IMAGE_ARG_FILESERVER
@@ -19,27 +20,9 @@ RUN set -ex \
 
 
 #COPY --from=jupyter/datascience-notebook:2bfbb7d17524 / /
-COPY --from=fpco/stack-build:lts-11.21 / /
+#COPY --from=fpco/stack-build:lts-11.21 / /
 
-
-# F60F4B3D7FA2AF80 is key of repo http://*.download.nvidia.com
-RUN set -ex \
-  && cat /etc/os-release \
-  && echo "jovyan ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/jovyan \
-  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F60F4B3D7FA2AF80 \
-  && sed -i 's#deb http:#deb https:#' /etc/apt/sources.list.d/cuda.list \
-  && apt-get -y clean \
-  && apt-get -y update \
-  && apt-get -y install aria2 gnupg \
-                    libblas-dev libcairo2-dev libgeoip-dev libffi-dev libgmp-dev \
-                    libicu-dev libmagic-dev liblapack-dev libpango1.0-dev libsnappy-dev libtinfo-dev libzmq3-dev \
-                    netbase python3-dev wget \
-  && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libtinfo.so.6 \
-  && ls -la /var/cache/man/ \
-  && apt-get -y -q purge python3-pip python-pip-whl \
-  && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
-# python3-pip python3-setuptools python-pip-whl
-
+RUN curl -sSL https://get.haskellstack.org/ | sh
 
 ## https://github.com/commercialhaskell/stack/blob/master/etc/dockerfiles/stack-build/lts-11.0/Dockerfile
 #ARG GHC_VERSION=8.2.2
@@ -100,6 +83,25 @@ RUN set -ex \
 ##
 #ENTRYPOINT ["/usr/local/sbin/pid1"]
 #CMD ["bash"]
+
+
+# F60F4B3D7FA2AF80 is key of repo http://*.download.nvidia.com
+RUN set -ex \
+  && cat /etc/os-release \
+  && echo "jovyan ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/jovyan \
+  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys F60F4B3D7FA2AF80 \
+  && if [ -f /etc/apt/sources.list.d/cuda.list ]; then sed -i 's#deb http:#deb https:#' /etc/apt/sources.list.d/cuda.list; fi \
+  && apt-get -y clean \
+  && apt-get -y update \
+  && apt-get -y install aria2 gnupg \
+                    libblas-dev libcairo2-dev libgeoip-dev libffi-dev libgmp-dev \
+                    libicu-dev libmagic-dev liblapack-dev libpango1.0-dev libsnappy-dev libtinfo-dev libzmq3-dev \
+                    netbase python3-dev wget \
+  && ln -s /usr/lib/x86_64-linux-gnu/libtinfo.so /usr/lib/x86_64-linux-gnu/libtinfo.so.6 \
+  && ls -la /var/cache/man/ \
+  && apt-get -y -q purge python3-pip python-pip-whl \
+  && apt -q -y clean && rm -rf /var/lib/apt/lists/* && rm -f /var/cache/apt/*.bin
+# python3-pip python3-setuptools python-pip-whl
 
 
 # https://github.com/gibiansky/IHaskell

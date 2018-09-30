@@ -25,7 +25,9 @@ docker-compose -f docker-compose_jupyter-cling.yml build --pull
 
 docker-compose -f docker-compose_jupyter-icsharp.yml build --pull
 
-#docker-compose -f docker-compose_jupyter-haskell.yml build --pull
+docker-compose -f docker-compose_jupyter-haskell-base.yml build --pull
+
+docker-compose -f docker-compose_jupyter-haskell.yml build --pull
 
 docker-compose build --pull
 ```
