@@ -36,7 +36,7 @@ docker-compose build --pull
 ## Run
 
 ```bash
-docker network create --driver=bridge --ipv6 --ipam-driver=default --subnet=172.16.238.0/24 --subnet=2001:3984:3989::/64 local-network
+docker network create --driver=bridge --ipam-driver=default --subnet=172.16.238.0/24 local-network
 
 # start up
 docker-compose up
