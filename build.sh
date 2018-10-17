@@ -21,8 +21,8 @@ else
 fi
 
 # Build image
-if [[ "$(docker images -q ${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG} 2> /dev/null)" == "" ]]; then
+if [[ "$(docker images -q ${IMAGE_PREFIX}${IMAGE_NAME}:${IMAGE_TAG} 2> /dev/null)" == "" ]]; then
     docker-compose -f ${DOCKER_COMPOSE_FILE} build
 fi
 
-docker push ${IMAGE_PREFIX}/${IMAGE_NAME}:${IMAGE_TAG}
+docker push ${IMAGE_PREFIX}${IMAGE_NAME}:${IMAGE_TAG}
