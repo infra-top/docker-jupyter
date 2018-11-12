@@ -14,7 +14,7 @@ services:
       - IMAGE_ARG_APT_MIRROR=${IMAGE_ARG_APT_MIRROR:-mirrors.163.com}
       - IMAGE_ARG_FILESERVER=${IMAGE_ARG_FILESERVER}
     command: ["start-notebook.sh"]
-    container_name: ${CONTAINER_HOST_NAME:-jupyter-notebook}
+    container_name: ${CONTAINER_HOST_NAME:-standalone.jupyter-notebook}
     environment:
     #- CHOWN_EXTRA="<some dir>,<some other dir>"
     #- CHOWN_EXTRA_OPTS=-R
@@ -27,7 +27,7 @@ services:
     - NB_GROUP=${NB_USER:-jovyan}
     - NB_UID=1000
     - NB_USER=${NB_USER:-jovyan}
-    hostname: ${CONTAINER_HOST_NAME:-jupyter-notebook}
+    hostname: ${CONTAINER_HOST_NAME:-standalone.jupyter-notebook}
     image: ${IMAGE_PREFIX:-infratop}/jupyter-notebook:${IMAGE_TAG:-177037d09156}
     labels:
       deploy.config.commit: ${LABEL_DEPLOY_CONFIG_COMMIT:-unknown}
@@ -35,12 +35,12 @@ services:
       deploy.config.ref: ${LABEL_DEPLOY_CONFIG_REF:-unknown}
       deploy.util.commit: ${LABEL_DEPLOY_UTIL_COMMIT:-unknown}
       deploy.util.ref: ${LABEL_DEPLOY_UTIL_REF:-unknown}
-      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.jupyter}
-      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/jupyter/standalone}
+      instance.name.short: ${LABEL_INSTANCE_NAME_SHORT:-standalone.jupyter-notebook}
+      instance.name: ${LABEL_INSTANCE_NAME:-127.0.0.1/jupyter-notebook/standalone}
     networks:
       local-network:
-        ipv4_address: 172.16.238.100
-        #ipv6_address: 2001:3984:3989::100
+        ipv4_address: ${IPV4_ADDRESS:-172.16.238.100}
+        #ipv6_address: ${IPV6_ADDRESS:-2001:3984:3989::100}
     ports:
     - "${SERVER_PORT:-8888}:8888"
     restart: always
